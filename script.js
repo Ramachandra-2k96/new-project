@@ -34,6 +34,7 @@ function loadFirebase() {
         database.ref('notepad').on('value', (snapshot) => {
             const remoteText = snapshot.val();
             notepadTextarea.value = remoteText;
+            updateLineNumbers(); 
         });
     }
     // Call the initializeNotepad function
