@@ -17,7 +17,7 @@ function loadFirebase() {
 
     // Function to set up the notepad functionality
     function initializeNotepad() {
-        const notepadTextarea = document.getElementById('editor-container');
+        const notepadTextarea = document.getElementById('editor');
 
         // Reference to the database
         const database = firebase.database();
@@ -36,7 +36,6 @@ function loadFirebase() {
             notepadTextarea.value = remoteText;
         });
     }
-
     // Call the initializeNotepad function
     initializeNotepad();
 }
