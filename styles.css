@@ -1,0 +1,47 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    display: flex;
+    background-color: #f1f1f1;
+  }
+  #editor-container {
+    flex-grow: 1;
+    padding: 20px;
+  }
+
+  #line-numbers {
+    counter-reset: line;
+    float: left;
+    margin-top: 24px;
+    margin-left: 20px;
+    padding: 10px 0px;
+    list-style: none;
+    color: #555;
+  }
+
+  #line-numbers li::before {
+    content: counter(line);
+    counter-increment: line;
+    display: block;
+    line-height: 1.6;
+    font-size: 16px;
+    padding-right: 10px;
+    text-align: right;
+    color: #888;
+  }
+
+  textarea {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    border: none;
+    outline: none;
+    width: 97%;
+    height: 100%;
+    resize: none;
+    background-color: #fff;
+    color: #333;
+    padding: 15px;
+    line-height: 1.6;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
