@@ -41,17 +41,17 @@ function loadFirebase() {
     initializeNotepad();
 }
 const editor = document.getElementById('editor');
-    const lineNumbers = document.getElementById('line-numbers');
+const lineNumbers = document.getElementById('line-numbers');
 
-    function updateLineNumbers() {
-      const lines = editor.value.split('\n');
-      lineNumbers.innerHTML = '';
+function updateLineNumbers() {
+const lines = editor.value.split('\n');
+lineNumbers.innerHTML = '';
 
-      for (let i = 1; i <= lines.length; i++) {
-        const li = document.createElement('li');
-        li.appendChild(document.createTextNode(''));
-        lineNumbers.appendChild(li);
-      }
-    }
-    updateLineNumbers(); 
-    editor.addEventListener('input', updateLineNumbers);
+for (let i = 1; i <= lines.length; i++) {
+    const li = document.createElement('li');
+    li.appendChild(document.createTextNode(''));
+    lineNumbers.appendChild(li);
+}
+}
+updateLineNumbers(); 
+editor.addEventListener('input', updateLineNumbers);
