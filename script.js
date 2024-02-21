@@ -24,6 +24,7 @@ function loadFirebase() {
     }
     const database = firebase.database();
     const editorRef = database.ref('editor');
+    const editor = ace.edit('editor'); // Replace 'yourEditorElementId' with the actual ID of your Ace editor element
 
     // Set up a listener for changes in the editor content
     editorRef.on('value', (snapshot) => {
@@ -31,10 +32,12 @@ function loadFirebase() {
         // Disable editor change events to prevent an infinite loop
         editor.off('change', onEditorChange);
         if (content !== editor.getValue()) {
+            // Get the current cursor position
+            const cursorPosition = editor.getCursorPosition();
             // Update editor only if content has changed
             editor.setValue(content);
-            // Set the selection range to the end of the document
-            editor.gotoLine(editor.session.getLength(), editor.session.getLine(editor.session.getLength() - 1).length);
+            // Set the selection range to the cursor position or the end of the document
+            editor.gotoLine(cursorPosition.row + 1, cursorPosition.column);
         }
         // Re-enable editor change events
         editor.on('change', onEditorChange);
@@ -45,6 +48,5 @@ function loadFirebase() {
         const currentContent = editor.getValue();
         editorRef.set(currentContent);
     }
-
     editor.on('change', onEditorChange);
 }
