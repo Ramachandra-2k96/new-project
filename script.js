@@ -1,3 +1,12 @@
+let editor;
+
+window.onload = function() {
+    editor = ace.edit("editor");
+    editor.setTheme("ace/theme/chrome");
+    editor.session.setMode("ace/mode/python");
+    loadFirebase();
+}
+
 //configuration contents get it from firebase
 const firebaseConfig = {
     apiKey: "AIzaSyA0bQU9QWhULk7qoQcaUSUyv37e81AWp8Q",
@@ -7,51 +16,35 @@ const firebaseConfig = {
     messagingSenderId: "413588146364",
     appId: "1:413588146364:web:4963a181276b51730fa8b9"
 };
-//load this function after everything is intialised 
 function loadFirebase() {
     // Check if Firebase app has already been initialized
     if (!firebase.apps.length) {
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
     }
+    const database = firebase.database();
+    const editorRef = database.ref('editor');
 
-    // Function to set up the notepad functionality
-    function initializeNotepad() {
-        const notepadTextarea = document.getElementById('editor');
+    // Set up a listener for changes in the editor content
+    editorRef.on('value', (snapshot) => {
+        const content = snapshot.val();
+        // Disable editor change events to prevent an infinite loop
+        editor.off('change', onEditorChange);
+        if (content !== editor.getValue()) {
+            // Update editor only if content has changed
+            editor.setValue(content);
+            // Set the selection range to the end of the document
+            editor.gotoLine(editor.session.getLength(), editor.session.getLine(editor.session.getLength() - 1).length);
+        }
+        // Re-enable editor change events
+        editor.on('change', onEditorChange);
+    });
 
-        // Reference to the database
-        const database = firebase.database();
-
-        // Listen for text changes
-        notepadTextarea.addEventListener('input', (event) => {
-            const newText = event.target.value;
-
-            // Update the text in the Firebase database
-            database.ref('notepad').set(newText);
-        });
-
-        // Listen for changes from other users
-        database.ref('notepad').on('value', (snapshot) => {
-            const remoteText = snapshot.val();
-            notepadTextarea.value = remoteText;
-            updateLineNumbers(); 
-        });
+    // Set up a listener for changes in the editor and update the database
+    function onEditorChange(delta) {
+        const currentContent = editor.getValue();
+        editorRef.set(currentContent);
     }
-    // Call the initializeNotepad function
-    initializeNotepad();
-}
-const editor = document.getElementById('editor');
-const lineNumbers = document.getElementById('line-numbers');
 
-function updateLineNumbers() {
-const lines = editor.value.split('\n');
-lineNumbers.innerHTML = '';
-
-for (let i = 1; i <= lines.length; i++) {
-    const li = document.createElement('li');
-    li.appendChild(document.createTextNode(''));
-    lineNumbers.appendChild(li);
+    editor.on('change', onEditorChange);
 }
-}
-updateLineNumbers(); 
-editor.addEventListener('input', updateLineNumbers);

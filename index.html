@@ -1,22 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online Notepad</title>
-    <link rel="stylesheet" href="./styles.css">
-    <!-- Add Firebase SDK with defer attribute and onload event -->
+    <title>Online IDE</title>
     <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app-compat.js" defer></script> <!-- defer waits untill the html is loaded and the initialises this method-->
-    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-database-compat.js" defer onload="loadFirebase()"></script><!-- once fire base database contents are exported then only initialise it using onload method-->
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-database-compat.js" defer></script><!-- once fire base database contents are exported then only initialise it using onload method-->
+    <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
-    <div id="line-numbers"></div>
-
-    <div id="editor-container">
-      <textarea id="editor" oninput="updateLineNumbers()" placeholder="Start typing..."></textarea>
+    <div class="control-panel">
+        Select Language:
+        &nbsp; &nbsp;
+        <select id="languages" class="languages" onchange="changeLanguage()">
+            <option value="php"> JAVA </option>
+            <option value="python"> Python </option>
+        </select>
     </div>
+    <div class="editor" id="editor"></div>
+    <div class="button-container">
+        <button class="btn" onclick="executeCode()"> Run </button>
+    </div>
+    <div class="output"></div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="./js/lib/ace.js"></script>
+    <script src="./js/lib/theme-chrome.js"></script>
     <script src="./script.js"></script>
 </body>
 </html>
