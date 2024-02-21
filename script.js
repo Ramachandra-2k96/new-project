@@ -50,3 +50,19 @@ function loadFirebase() {
     }
     editor.on('change', onEditorChange);
 }
+function changeLanguage()
+{
+    var selectedLanguage = document.getElementById("languages").value;
+    switch (selectedLanguage) {
+        case "java":
+            alert("You selected JAVA!");
+            editor.session.setMode("ace/mode/java");
+            break;
+        case "python":
+            alert("You selected Python!");
+            editor.session.setMode("ace/mode/python");
+            break;
+        default:
+            break;
+    }
+}
