@@ -209,7 +209,7 @@ function executeCode() {
     };
 
     $.ajax({
-        url: "https://replit.com/api/v1/eval",
+        url: "https://cors-anywhere.herokuapp.com/https://replit.com/api/v1/eval",
         method: "POST",
         contentType: "application/json",
         data: JSON.stringify(requestData),
