@@ -202,31 +202,44 @@ function changeLanguage()
 }
 
 function executeCode() {
+    // Prepare the data for the POST request
+    var requestData = {
+        language: $("#languages").val(),
+        code: editor.getSession().getValue()
+    };
+
     $.ajax({
         url: "https://replit.com/api/v1/eval",
         method: "POST",
         contentType: "application/json",
-        data: JSON.stringify({
-            language: $("#languages").val(),
-            code: editor.getSession().getValue()
-        }),
+        data: JSON.stringify(requestData),
         success: function(response) {
-            var formattedOutput = "<div class='output-section'>";
-            formattedOutput += "<div class='output-header'><strong>Command:</strong> " + response.command + "</div>";
-            formattedOutput += "<div class='output-body'><div class='out'>Output:</div><br><pre>" + response.output + "</pre></div>";
-
-            if (response.error) {
-                formattedOutput += "<div class='output-error'><strong>Error:</strong><br><pre>" + response.error + "</pre></div>";
-            }
-
-            formattedOutput += "</div>";
-
-            $(".output").html(formattedOutput);
+            // Format and display the output
+            displayOutput(response);
         },
         error: function(xhr, status, error) {
             console.error('Error during compilation:', error);
-            var errorMessage = "Error during compilation. Please check the console for more details.";
-            $(".output").html("<div class='output-error'><strong>Error:</strong> " + errorMessage + "</div>");
+            // Display error message
+            displayError();
         }
     });
+}
+
+function displayOutput(response) {
+    var formattedOutput = "<div class='output-section'>";
+    formattedOutput += "<div class='output-header'><strong>Command:</strong> " + response.command + "</div>";
+    formattedOutput += "<div class='output-body'><div class='out'>Output:</div><br><pre>" + response.output + "</pre></div>";
+
+    if (response.error) {
+        formattedOutput += "<div class='output-error'><strong>Error:</strong><br><pre>" + response.error + "</pre></div>";
+    }
+
+    formattedOutput += "</div>";
+
+    $(".output").html(formattedOutput);
+}
+
+function displayError() {
+    var errorMessage = "Error during compilation. Please check the console for more details.";
+    $(".output").html("<div class='output-error'><strong>Error:</strong> " + errorMessage + "</div>");
 }
