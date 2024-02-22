@@ -4,6 +4,10 @@ window.onload = function() {
     editor = ace.edit("editor");
     editor.setTheme("ace/theme/chrome");
     editor.session.setMode("ace/mode/python");
+    editor.setOptions({
+        enableBasicAutocompletion: false,
+        enableLiveAutocompletion: false
+    });
     loadFirebase();
 }
 
@@ -46,7 +50,6 @@ editorRef.on('value', (snapshot) => {
         if (content !== editorSession.getValue()) {
             editorSession.setValue(content);
         }
-
         // Set the cursor position
         if (cursorPosition && cursorPosition.row !== undefined && cursorPosition.column !== undefined) {
             editor.gotoLine(cursorPosition.row + 1, cursorPosition.column);
@@ -63,8 +66,6 @@ editorRef.on('value', (snapshot) => {
                 end: { row: endRow, column: endColumn }
             });
         }
-
-        editor.on('change', onEditorChange);
     }
 });
 
@@ -83,6 +84,7 @@ function onEditorChange(delta) {
         'selection/start': { row: selection.start.row, column: selection.start.column },
         'selection/end': { row: selection.end.row, column: selection.end.column+1 }
     });
+    editorSession.getSelection().clearSelection();
 }
 
 // Set up the initial 'change' event listener
@@ -197,4 +199,34 @@ function changeLanguage()
         default:
             break;
     }
+}
+
+function executeCode() {
+    $.ajax({
+        url: "https://replit.com/api/v1/eval",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({
+            language: $("#languages").val(),
+            code: editor.getSession().getValue()
+        }),
+        success: function(response) {
+            var formattedOutput = "<div class='output-section'>";
+            formattedOutput += "<div class='output-header'><strong>Command:</strong> " + response.command + "</div>";
+            formattedOutput += "<div class='output-body'><div class='out'>Output:</div><br><pre>" + response.output + "</pre></div>";
+
+            if (response.error) {
+                formattedOutput += "<div class='output-error'><strong>Error:</strong><br><pre>" + response.error + "</pre></div>";
+            }
+
+            formattedOutput += "</div>";
+
+            $(".output").html(formattedOutput);
+        },
+        error: function(xhr, status, error) {
+            console.error('Error during compilation:', error);
+            var errorMessage = "Error during compilation. Please check the console for more details.";
+            $(".output").html("<div class='output-error'><strong>Error:</strong> " + errorMessage + "</div>");
+        }
+    });
 }
